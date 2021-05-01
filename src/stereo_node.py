@@ -40,7 +40,7 @@ target_FPS = 15
 # initialize the camera
 print
 "Init capture..."
-cap = cv2.VideoCapture('http://mfp:8080')
+cap = cv2.VideoCapture('http://turtlebot:8080')
 
 stream = io.BytesIO()
 
@@ -105,12 +105,15 @@ toggle = True
 # capture frames from the camera
 br = CvBridge()
 
+debug_view = False
+
 while(cap.isOpened()):
     # Capture frame-by-frame
     ret, frame = cap.read()
     if ret == True:
-        # Display the resulting frame
-        cv2.imshow('Source',frame)
+        if(debug_view == True):
+            # Display the resulting frame
+            cv2.imshow('Source',frame)
 
         # Press Q on keyboard to  exit
         if cv2.waitKey(25) & 0xFF == ord('q'):
@@ -128,12 +131,13 @@ while(cap.isOpened()):
         # right_cam_pub.publish(right_cam_info)
         #
 
-        cv2.imshow('Left', frame[0:240, 0:320])
-        cv2.imshow('Right', frame[240:480, 0:320])
+        if(debug_view == True):
+            cv2.imshow('Left', frame[0:240, 0:320])
+            cv2.imshow('Right', frame[240:480, 0:320])
 
         # publish the image pair
-        left_img_pub.publish(br.cv2_to_imgmsg(frame[0:240, 0:320]))
-        right_img_pub.publish(br.cv2_to_imgmsg(frame[240:480, 0:320]))
+        left_img_pub.publish(br.cv2_to_imgmsg(frame[0:240, 0:320], encoding="bgr8"))
+        right_img_pub.publish(br.cv2_to_imgmsg(frame[240:480, 0:320], encoding="bgr8"))
 
         # console info
         if time.time() > frametimer + 1.0:
