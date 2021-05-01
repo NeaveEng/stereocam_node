@@ -39,13 +39,13 @@ target_FPS = 15
 
 # initialize the camera
 print("Init capture...")
-cap = cv2.VideoCapture('http://turtlebot:8080')
+cap = cv2.VideoCapture('http://192.168.1.183:8080')
 
 stream = io.BytesIO()
 
 # ----------------------------------------------------------
 # setup the publishers
-print("init publishers")
+print("Init publishers")
 
 # queue_size should be roughly equal to FPS or that causes lag?
 left_img_pub = rospy.Publisher('stereo/right/image_raw', Image, queue_size=1)
@@ -81,14 +81,11 @@ right_cam_info = parse_calibration_yaml('right.yaml')
 # ---------------------------------------------------------------
 # this is supposed to shut down gracefully on CTRL-C but doesn't quite work:
 def signal_handler(signal, frame):
-    print
-    'CTRL-C caught'
-    print
-    'closing camera'
+    print('CTRL-C caught')
+    print('closing camera')
     cap.close()
     time.sleep(1)
-    print
-    'camera closed'
+    print('camera closed')
     sys.exit(0)
 
 
@@ -106,6 +103,8 @@ br = CvBridge()
 debug_view = False
 
 try:
+    print("Stream opened: ", cap.isOpened())
+
     while(cap.isOpened()):
         # Capture frame-by-frame
         ret, frame = cap.read()
@@ -135,8 +134,8 @@ try:
                 cv2.imshow('Right', frame[240:480, 0:320])
 
             # publish the image pair
-            left_img_pub.publish(br.cv2_to_imgmsg(frame[0:240, 0:320], encoding="bgr8"))
-            right_img_pub.publish(br.cv2_to_imgmsg(frame[240:480, 0:320], encoding="bgr8"))
+            left_img_pub.publish(br.cv2_to_imgmsg(frame[0:240, 0:320], encoding="rgb8"))
+            right_img_pub.publish(br.cv2_to_imgmsg(frame[240:480, 0:320], encoding="rgb8"))
 
             # console info
             if time.time() > frametimer + 1.0:
