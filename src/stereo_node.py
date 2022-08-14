@@ -39,7 +39,7 @@ target_FPS = 15
 
 # initialize the camera
 print("Init capture...")
-cap = cv2.VideoCapture('http://192.168.1.183:8080')
+cap = cv2.VideoCapture('http://192.168.82.1:8080')
 
 stream = io.BytesIO()
 
@@ -119,23 +119,23 @@ try:
 
             framecount += 1
 
-            # stamp = rospy.Time.now()
-            # left_img_msg.header.stamp = stamp
-            # right_img_msg.header.stamp = stamp
-            # left_cam_info.header.stamp = stamp
-            # right_cam_info.header.stamp = stamp
-            #
-            # left_cam_pub.publish(left_cam_info)
-            # right_cam_pub.publish(right_cam_info)
-            #
+            stamp = rospy.Time.now()
+            left_img_msg.header.stamp = stamp
+            right_img_msg.header.stamp = stamp
+            left_cam_info.header.stamp = stamp
+            right_cam_info.header.stamp = stamp
+            
+            left_cam_pub.publish(left_cam_info)
+            right_cam_pub.publish(right_cam_info)
+            
 
             if(debug_view == True):
                 cv2.imshow('Left', frame[0:240, 0:320])
                 cv2.imshow('Right', frame[240:480, 0:320])
 
             # publish the image pair
-            left_img_pub.publish(br.cv2_to_imgmsg(frame[0:240, 0:320], encoding="rgb8"))
-            right_img_pub.publish(br.cv2_to_imgmsg(frame[240:480, 0:320], encoding="rgb8"))
+            left_img_pub.publish(br.cv2_to_imgmsg(frame[0:240, 0:320], encoding="bgr8"))
+            right_img_pub.publish(br.cv2_to_imgmsg(frame[240:480, 0:320], encoding="bgr8"))
 
             # console info
             if time.time() > frametimer + 1.0:
