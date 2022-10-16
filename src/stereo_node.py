@@ -39,7 +39,10 @@ target_FPS = 15
 
 # initialize the camera
 print("Init capture...")
-cap = cv2.VideoCapture('http://192.168.82.1:8080')
+cap = cv2.VideoCapture(1)
+
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
 
 stream = io.BytesIO()
 
@@ -48,11 +51,11 @@ stream = io.BytesIO()
 print("Init publishers")
 
 # queue_size should be roughly equal to FPS or that causes lag?
-left_img_pub = rospy.Publisher('stereo/right/image_raw', Image, queue_size=1)
-right_img_pub = rospy.Publisher('stereo/left/image_raw', Image, queue_size=1)
+left_img_pub = rospy.Publisher('stereo/left/image_raw', Image, queue_size=1)
+right_img_pub = rospy.Publisher('stereo/right/image_raw', Image, queue_size=1)
 
-left_cam_pub = rospy.Publisher('stereo/right/camera_info', CameraInfo, queue_size=1)
-right_cam_pub = rospy.Publisher('stereo/left/camera_info', CameraInfo, queue_size=1)
+left_cam_pub = rospy.Publisher('stereo/left/camera_info', CameraInfo, queue_size=1)
+right_cam_pub = rospy.Publisher('stereo/right/camera_info', CameraInfo, queue_size=1)
 
 rospy.init_node('stereo_pub')
 
@@ -134,8 +137,8 @@ try:
                 cv2.imshow('Right', frame[240:480, 0:320])
 
             # publish the image pair
-            left_img_pub.publish(br.cv2_to_imgmsg(frame[0:240, 0:320], encoding="bgr8"))
-            right_img_pub.publish(br.cv2_to_imgmsg(frame[240:480, 0:320], encoding="bgr8"))
+            left_img_pub.publish(br.cv2_to_imgmsg(frame, encoding="bgr8"))
+            # right_img_pub.publish(br.cv2_to_imgmsg(frame[240:480, 0:320], encoding="bgr8"))
 
             # console info
             if time.time() > frametimer + 1.0:

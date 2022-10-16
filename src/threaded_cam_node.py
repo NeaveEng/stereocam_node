@@ -18,11 +18,11 @@ def parse_calibration_yaml(calib_file):
     cam_info = CameraInfo()
     cam_info.height = params['image_height']
     cam_info.width = params['image_width']
-    cam_info.distortion_model = params['distortion_model']
-    cam_info.K = params['camera_matrix']['data']
-    cam_info.D = params['distortion_coefficients']['data']
-    cam_info.R = params['rectification_matrix']['data']
-    cam_info.P = params['projection_matrix']['data']
+    # cam_info.distortion_model = params['distortion_model']
+    # cam_info.K = params['camera_matrix']['data']
+    # cam_info.D = params['distortion_coefficients']['data']
+    # cam_info.R = params['rectification_matrix']['data']
+    # cam_info.P = params['projection_matrix']['data']
 
     return cam_info
 
@@ -112,8 +112,8 @@ while True:
         break
     
     framecount +=1
-    left_img_msg = bridge.cv2_to_imgmsg(left_frame, encoding="passthrough")
-    right_img_msg = bridge.cv2_to_imgmsg(right_frame, encoding="passthrough")
+    left_img_msg = bridge.cv2_to_imgmsg(left_frame, encoding="bgr8")
+    right_img_msg = bridge.cv2_to_imgmsg(right_frame, encoding="bgr8")
     
     stamp = rospy.Time.now()
     left_cam_info.header.stamp = stamp    
@@ -122,8 +122,8 @@ while True:
     left_cam_pub.publish(left_cam_info)
     left_img_pub.publish(left_img_msg)
 
-    right_cam_pub.publish(right_cam_info)
-    right_img_pub.publish(right_img_msg)
+    # right_cam_pub.publish(right_cam_info)
+    # right_img_pub.publish(right_img_msg)
 
     rate.sleep()
 
